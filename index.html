@@ -5,10 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Book Finder | Chingu Solo Project</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
   <div id="app">
-    {{ message }}
+    <h1>Book finder</h1>
+    <section class="search">
+      <form action="#" class="search__form" @submit="searchBooks">
+        <input type="text" class="search__field" placeholder="Search by book title or author..." 
+        v-model="query" @keyup.enter="searchBooks">
+        <button class="search__btn">Search</button>
+      </form>
+      <p class="search__message" v-if="error">Please provide a search query first</p>
+    </section>
+    <section id="library">
+      <span class="loading"></span>
+      <p class="library__message"></p>
+      <div class="books">
+        <div class="book" v-for="(item, index) in items">
+          <img class="book__cover" :src="`${item.volumeInfo.imageLinks.thumbnail}`" :alt="`${item.volumeInfo.title} book cover`">
+          <div class="book__infos">
+            <h2 class="book__title">{{ item.volumeInfo.title }}</h2>
+            <p class="book__descr">
+              By <span v-for="author in item.volumeInfo.authors">{{ author }}</span><br>
+              <span>Publish by {{ item.volumeInfo.publisher }}</span>
+            </p>
+            <a :href="`${item.infoLink}`" target="_blank" class="book__link">See this book</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    {{ items }}
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -16,7 +44,23 @@
     var app = new Vue({
       el: '#app',
       data: {
-        message: 'Hello Vue!'
+        items: null,
+        query: '',
+        error: false
+      },
+      methods: {
+        searchBooks: function(e) {
+          e.preventDefault();
+
+          let searchFor = this.query;
+          if(searchFor.length > 3) {
+            axios
+            .get('https://www.googleapis.com/books/v1/volumes?q=' + searchFor + '&key=AIzaSyAmpEfiA-vVjWcXTwOsbFzKuHuVdzLsILA')
+            .then(response => (this.items = response.data.items))
+          } else {
+            this.error = true;
+          }
+        }
       }
     })
   </script>
