@@ -1,0 +1,22 @@
+{
+  "name": "chingu-book-finder-solo-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/janselme/chingu-solo-project.git"
+  },
+  "author": "Jennifer ANSELME",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/janselme/chingu-solo-project/issues"
+  },
+  "homepage": "https://github.com/janselme/chingu-solo-project#readme",
+  "devDependencies": {
+    "browser-sync": "^2.26.3"
+  }
+}
