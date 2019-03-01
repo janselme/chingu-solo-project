@@ -14,15 +14,15 @@
     <section class="search">
       <form action="#" class="search__form" @submit="searchBooks">
         <input type="text" class="search__field" placeholder="Search by book title or author..." 
-        v-model="query" @keyup.enter="searchBooks">
+        v-model="query" @keyup="searchBooks">
         <button class="search__btn">Search</button>
       </form>
       <p class="search__message" v-if="error">Please provide a search query first</p>
     </section>
     <section id="library">
-      <p class="loading" v-if="isLoading">Loading...</p>
-      <p class="library__message"></p>
-      <div class="books">
+      <p class="loading text-center" v-if="isLoading">Loading...</p>
+      <p class="library__message text-center" v-if="noResult">Nothing here yet - Try searching for another book!</p>
+      <div class="books" v-if="!noResult">
         <div class="book" v-for="(item, index) in items">
           <img class="book__cover" :src="`${item.volumeInfo.imageLinks.thumbnail}`" :alt="`${item.volumeInfo.title} book cover`">
           <div class="book__infos">
@@ -47,7 +47,8 @@
         items: null,
         query: '',
         error: false,
-        isLoading: false
+        isLoading: false,
+        noResult: false
       },
       methods: {
         searchBooks: function(e) {
@@ -58,9 +59,15 @@
             axios
             .get('https://www.googleapis.com/books/v1/volumes?q=' + searchFor + '&printType=books&fields=items(volumeInfo/imageLinks,volumeInfo/title,volumeInfo/authors,volumeInfo/publisher,volumeInfo/infoLink)&key=' + this.myKey)
             .then(response => {
-              this.items = response.data.items;
+              let responseLength = Object.keys(response.data).length;
+              if(responseLength == 0) {
+                this.noResult = true;
+              } else {
+                this.noResult = false;
+                this.items = response.data.items;
+              }
+
               this.isLoading = false;
-              console.log(response);
             })
             .catch(function (error) {
               // handle error
@@ -68,6 +75,7 @@
             })
           } else {
             this.error = true;
+            this.noResult = false;
           }
         }
       }
